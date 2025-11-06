@@ -1,4 +1,3 @@
-```markdown
 # 🎯 SPOTA - Event Discovery App
 
 <div align="center">
