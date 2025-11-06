@@ -29,7 +29,7 @@ SPOTA is a Flutter-based mobile application that helps users in Bahir Dar discov
 - **State Management:** Riverpod
 
 ## 👥 Team Members
-- **Abraham Addisu** ([@Minas-27](https://github.com/Minas-27)) - Project Lead
+- **Abraham Addisu** ([@Minas-27](https://github.com/Minas-27))
 - **Hailemariam Yohannes** ([@halazYoha](https://github.com/halazYoha))
 - **Henok Ashenafi** ([@henokashenafi](https://github.com/henokashenafi))
 - **Esubalew Worku** ([@esubaleww](https://github.com/esubaleww))
