@@ -257,10 +257,6 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    // Show loading indicator? The screen doesn't have one in state, but AuthProvider has isLoading.
-    // But we are not listening to it here (we could).
-    // For now, let's just await.
-
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final success = await authProvider.signup(
@@ -277,11 +273,21 @@ class _SignupScreenState extends State<SignupScreen> {
             : null,
       );
 
-      if (!success) {
-        if (!mounted) return;
+      if (!mounted) return;
+
+      if (success) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account created successfully!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        // AppNavigator will handle navigation automatically
+      } else {
         _showError(authProvider.error ?? 'Signup failed');
       }
-      // No need for manual navigation, AppNavigator handles it reactively
     } catch (e) {
       if (!mounted) return;
       _showError(e.toString());

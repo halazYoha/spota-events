@@ -29,6 +29,7 @@ class _BookingScreenState extends State<BookingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Event Summary
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -73,6 +74,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(height: 32),
+
+            // Ticket Selection
             const Text(
               'Number of Tickets',
               style: TextStyle(
@@ -81,6 +84,10 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(height: 16),
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7c3ed60 (feat: Implement Firebase Authentication with Firestore integration)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -158,6 +165,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(height: 24),
+
+            // Price Breakdown
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -181,6 +190,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(height: 32),
+
+            // Payment Methods
             const Text(
               'Payment Method',
               style: TextStyle(
@@ -217,7 +228,7 @@ class _BookingScreenState extends State<BookingScreen> {
               child: RadioListTile(
                 value: 'other',
                 groupValue: 'chapa',
-                onChanged: null,
+                onChanged: null, // Disabled
                 title: const Text(
                   'Telebirr (Coming Soon)',
                   style: TextStyle(color: Colors.grey),
@@ -227,6 +238,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(height: 32),
+
+            // Book Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -272,9 +285,11 @@ class _BookingScreenState extends State<BookingScreen> {
     });
 
     try {
+      // Mock Payment Flow
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
+        // Show mock payment success
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Payment Successful (Demo)'),

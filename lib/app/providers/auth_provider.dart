@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:spota_events/shared/models/user_model.dart';
+import 'package:spota_events/shared/services/auth_service.dart';
 import 'dart:async';
 
 class AuthProvider with ChangeNotifier {
-  // final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
   UserModel _currentUser = UserModel.empty();
   bool _isLoading = false;
   String? _error;
@@ -15,38 +16,57 @@ class AuthProvider with ChangeNotifier {
   bool get isLoggedIn => _currentUser.uid.isNotEmpty;
 
   AuthProvider() {
-    // Mock initial check - assumes logged out or simple check
-    // In real app, we check firebase. For demo, we start fresh or auto-login if needed.
-    _currentUser = UserModel.empty();
+    _init();
+  }
+
+  void _init() {
+    _authService.authStateChanges.listen((user) async {
+      print('DEBUG: Auth state changed, user: ${user?.email}');
+      if (user != null) {
+        _setLoading(true);
+        // User is logged in, fetch profile
+        try {
+          final userModel = await _authService.getCurrentUser();
+          print(
+              'DEBUG: Got user model: ${userModel?.email}, role: ${userModel?.role}');
+          // getCurrentUser now always returns a UserModel when user is not null
+          // It uses fallback data if Firestore is unavailable
+          _currentUser = userModel ?? UserModel.empty();
+          print(
+              'DEBUG: Current user set to: ${_currentUser.email}, isLoggedIn: $isLoggedIn');
+        } catch (e) {
+          print('Error fetching user profile: $e');
+          _currentUser = UserModel.empty();
+        }
+        _setLoading(false);
+      } else {
+        print('DEBUG: User is null, logging out');
+        _currentUser = UserModel.empty();
+        _setLoading(false);
+      }
+    });
   }
 
   // void _fetchUserProfile(String uid) async {
   //   // Disabled for mock mode
   // }
 
-  // Login (Mock)
+  // Login
   Future<bool> login(String email, String password) async {
     _setLoading(true);
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network
+    _error = null;
 
-    // Mock successful login
-    final role =
-        email.contains('organizer') ? UserRole.organizer : UserRole.attendee;
-    _currentUser = UserModel(
-      uid: 'mock_uid_123',
-      email: email,
-      name: role == UserRole.organizer ? 'Abebe Kebede' : 'Tigist Haile',
-      phone: '+251 91 122 3344',
-      role: role,
-      organization: role == UserRole.organizer ? 'Grand Events PLC' : null,
-      bio: role == UserRole.organizer
-          ? 'Top rated organizer in Bahir Dar'
-          : null,
-      createdAt: DateTime.now(),
-    );
-    notifyListeners();
-    _setLoading(false);
-    return true;
+    try {
+      _currentUser = await _authService.signIn(email, password);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      notifyListeners();
+      return false;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   // Signup
@@ -71,19 +91,7 @@ class AuthProvider with ChangeNotifier {
         throw Exception('Password must be at least 6 characters');
       }
 
-      // Mock signup logic
-      _currentUser = UserModel(
-        uid: 'mock_uid_${DateTime.now().millisecondsSinceEpoch}',
-        email: email,
-        name: name,
-        phone: phone,
-        role: role,
-        organization: organization,
-        bio: bio,
-        createdAt: DateTime.now(),
-      );
-
-      /*
+      print('DEBUG: Starting signup for $email');
       _currentUser = await _authService.signUp(
         email: email,
         password: password,
@@ -93,11 +101,12 @@ class AuthProvider with ChangeNotifier {
         organization: organization,
         bio: bio,
       );
-      */
 
+      print('DEBUG: Signup successful, user: ${_currentUser.email}');
       notifyListeners();
       return true;
     } catch (e) {
+      print('DEBUG: Signup error: $e');
       _error = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
       return false;
@@ -106,13 +115,19 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Logout (Mock)
+  // Logout
   Future<void> logout() async {
     _setLoading(true);
-    await Future.delayed(const Duration(milliseconds: 500));
-    _currentUser = UserModel.empty();
-    notifyListeners();
-    _setLoading(false);
+    try {
+      await _authService.signOut();
+    } catch (e) {
+      print('Error during logout: $e');
+    } finally {
+      // Ensure user is cleared and loading is stopped regardless of errors
+      _currentUser = UserModel.empty();
+      notifyListeners();
+      _setLoading(false);
+    }
   }
 
   // Password reset
@@ -125,8 +140,7 @@ class AuthProvider with ChangeNotifier {
         throw Exception('Please enter your email');
       }
 
-      // await _authService.sendPasswordResetEmail(email);
-      await Future.delayed(const Duration(seconds: 1)); // Mock email sending
+      await _authService.sendPasswordResetEmail(email);
       return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
@@ -159,8 +173,7 @@ class AuthProvider with ChangeNotifier {
         createdAt: _currentUser.createdAt,
       );
 
-      // await _authService.updateProfile(updatedUser);
-      await Future.delayed(const Duration(seconds: 1)); // Mock update
+      await _authService.updateProfile(updatedUser);
       _currentUser = updatedUser;
 
       notifyListeners();

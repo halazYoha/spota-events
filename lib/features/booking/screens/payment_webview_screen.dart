@@ -36,7 +36,9 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith(widget.returnUrl)) {
-              Navigator.pop(context, true);
+              // Payment completed or cancelled (callback reached)
+              Navigator.pop(
+                  context, true); // Return true to indicate completion flow
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "394330633860",
+    "project_id": "spota-events",
+    "storage_bucket": "spota-events.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394330633860:android:a77ff431330c3f6ab274d1",
+        "android_client_info": {
+          "package_name": "com.example.spota_events"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBTw07A7UgiZlNtSBORMPnzm4b65ilYtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

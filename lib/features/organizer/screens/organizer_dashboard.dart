@@ -1,6 +1,6 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spota_events/app/providers/auth_provider.dart';
 import 'create_event_screen.dart';
 import 'organizer_notifications_screen.dart';
 
@@ -615,6 +615,9 @@ class _EventsContent extends StatelessWidget {
 class _ProfileContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final user = authProvider.currentUser;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -631,17 +634,17 @@ class _ProfileContent extends StatelessWidget {
             child: const Icon(Icons.person, size: 50, color: Colors.grey),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Abebe Kebede',
-            style: TextStyle(
+          Text(
+            user.name.isEmpty ? 'Organizer' : user.name,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'abebe.kebede@email.com',
-            style: TextStyle(
+          Text(
+            user.email,
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.grey,
             ),
@@ -683,9 +686,12 @@ class _ProfileContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildInfoRow('Organization', 'Event Masters PLC'),
-                _buildInfoRow('Phone', '+251 91 234 5678'),
-                _buildInfoRow('Member Since', 'January 2024'),
+                _buildInfoRow('Organization', user.organization ?? 'Not set'),
+                _buildInfoRow(
+                    'Phone', user.phone.isNotEmpty ? user.phone : 'Not set'),
+                // Simple date formatting if intl package is not available or just use split
+                _buildInfoRow(
+                    'Member Since', user.createdAt.toString().split(' ').first),
               ],
             ),
           ),
@@ -706,8 +712,10 @@ class _ProfileContent extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                // Logout
+              onPressed: () async {
+                final authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
+                await authProvider.logout();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

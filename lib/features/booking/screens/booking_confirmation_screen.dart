@@ -82,6 +82,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
+              // Success Icon
               Container(
                 width: 80,
                 height: 80,
@@ -96,6 +97,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Success Message
               const Text(
                 'Booking Confirmed!',
                 style: TextStyle(
@@ -104,6 +107,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+
               Text(
                 'Your tickets have been booked successfully',
                 style: TextStyle(
@@ -113,6 +117,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
+
+              // Ticket Details Card
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -122,6 +128,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
                 child: Column(
                   children: [
+                    // Event Info
                     Row(
                       children: [
                         Container(
@@ -161,6 +168,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                     const SizedBox(height: 20),
                     const Divider(),
                     const SizedBox(height: 20),
+
+                    // Booking Details
                     _buildDetailRow('Tickets', '${widget.ticketCount}'),
                     const SizedBox(height: 12),
                     _buildDetailRow('Total Paid', '${widget.totalPrice} ETB'),
@@ -171,6 +180,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Ticket Code
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -208,6 +219,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // SMS Notification
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -251,6 +264,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
               const SizedBox(height: 32),
+
+              // Action Buttons
               Column(
                 children: [
                   SizedBox(

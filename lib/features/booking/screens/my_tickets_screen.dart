@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class MyTicketsScreen extends StatelessWidget {
   const MyTicketsScreen({super.key});
 
+  // Sample booked events data
   final List<Map<String, dynamic>> bookedEvents = const [
     {
       'event': {
