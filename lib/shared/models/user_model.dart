@@ -5,8 +5,8 @@ class UserModel {
   final String phone;
   final UserRole role;
   final DateTime createdAt;
-  final String? organization; // For organizers
-  final String? bio; // For organizers
+  final String? organization;
+  final String? bio;
 
   const UserModel({
     required this.uid,
@@ -66,4 +66,5 @@ class UserModel {
 enum UserRole {
   attendee,
   organizer,
+  admin,
 }
