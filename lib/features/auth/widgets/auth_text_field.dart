@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthTextField extends StatelessWidget {
+class AuthTextField extends StatefulWidget {
   final String hintText;
   final IconData prefixIcon;
   final bool isPassword;
@@ -15,13 +15,39 @@ class AuthTextField extends StatelessWidget {
   });
 
   @override
+  State<AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<AuthTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.isPassword;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      obscureText: isPassword,
+      controller: widget.controller,
+      obscureText: _obscureText,
       decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: Icon(prefixIcon, color: Colors.grey[500]),
+        hintText: widget.hintText,
+        prefixIcon: Icon(widget.prefixIcon, color: Colors.grey[500]),
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey[500],
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

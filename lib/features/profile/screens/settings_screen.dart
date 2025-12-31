@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:spota_events/features/profile/screens/notifications_screen.dart';
+import 'package:spota_events/features/profile/screens/help_support_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -15,37 +17,29 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           _buildSettingsSection(
-            title: 'App Settings',
+            title: 'General',
             items: [
               _buildSettingsTile(
-                icon: Icons.language,
-                title: 'Language',
-                trailing: const Text('English'),
-                onTap: () {},
+                icon: Icons.notifications,
+                title: 'Notifications',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotificationsScreen()),
+                  );
+                },
               ),
               _buildSettingsTile(
-                icon: Icons.dark_mode,
-                title: 'Dark Mode',
-                trailing: Switch(
-                  value: false,
-                  onChanged: (value) {},
-                ),
-                onTap: () {},
-              ),
-            ],
-          ),
-          _buildSettingsSection(
-            title: 'Account',
-            items: [
-              _buildSettingsTile(
-                icon: Icons.lock,
-                title: 'Privacy Policy',
-                onTap: () {},
-              ),
-              _buildSettingsTile(
-                icon: Icons.description,
-                title: 'Terms of Service',
-                onTap: () {},
+                icon: Icons.help,
+                title: 'Help & Support',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HelpSupportScreen()),
+                  );
+                },
               ),
             ],
           ),

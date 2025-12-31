@@ -3,10 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:spota_events/app/providers/auth_provider.dart';
 import 'package:spota_events/features/booking/screens/my_tickets_screen.dart';
 import 'package:spota_events/features/profile/screens/settings_screen.dart';
-import 'package:spota_events/features/profile/screens/notifications_screen.dart';
-import 'package:spota_events/features/profile/screens/booking_history_screen.dart';
-import 'package:spota_events/features/profile/screens/payment_methods_screen.dart';
-import 'package:spota_events/features/profile/screens/help_support_screen.dart';
 import 'package:spota_events/features/profile/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -132,39 +128,6 @@ class ProfileScreen extends StatelessWidget {
                   },
                 ),
                 _buildMenuTile(
-                  icon: Icons.history,
-                  title: 'Booking History',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const BookingHistoryScreen()),
-                    );
-                  },
-                ),
-                _buildMenuTile(
-                  icon: Icons.payment,
-                  title: 'Payment Methods',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PaymentMethodsScreen()),
-                    );
-                  },
-                ),
-                _buildMenuTile(
-                  icon: Icons.notifications,
-                  title: 'Notifications',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NotificationsScreen()),
-                    );
-                  },
-                ),
-                _buildMenuTile(
                   icon: Icons.settings,
                   title: 'Settings',
                   onTap: () {
@@ -172,17 +135,6 @@ class ProfileScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const SettingsScreen()),
-                    );
-                  },
-                ),
-                _buildMenuTile(
-                  icon: Icons.help,
-                  title: 'Help & Support',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HelpSupportScreen()),
                     );
                   },
                 ),
