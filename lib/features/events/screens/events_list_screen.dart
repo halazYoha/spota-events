@@ -3,32 +3,65 @@ import 'package:spota_events/shared/models/event_model.dart';
 import 'package:spota_events/features/events/screens/event_details_screen.dart';
 import 'package:spota_events/features/events/widgets/category_chip.dart';
 import 'package:spota_events/features/events/widgets/event_card.dart';
+import 'package:spota_events/shared/services/event_service.dart';
+import 'package:spota_events/features/booking/screens/my_tickets_screen.dart'; // Add this import
+import 'package:spota_events/features/profile/screens/profile_screen.dart'; // Add this import
+import 'package:spota_events/features/profile/screens/notifications_screen.dart'; // Add this import
 
-class EventsListScreen extends StatefulWidget {
-  final String category;
-
-  const EventsListScreen({super.key, required this.category});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<EventsListScreen> createState() => _EventsListScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _EventsListScreenState extends State<EventsListScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = 'All';
+  final List<String> categories = [
+    'All',
+    'Music',
+    'Sports',
+    'University',
+    'Cultural'
+  ];
 
-  @override
-  void initState() {
-    super.initState();
-    selectedCategory = widget.category;
-  }
+  final EventService _eventService = EventService();
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
-  List<Event> get filteredEvents {
-    if (selectedCategory == 'All') {
-      return Event.sampleEvents;
+  int _currentIndex = 0; // Add this to track current tab
+
+  // Add this method to handle navigation
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    // Navigate to different screens based on the tab
+    if (index == 1) {
+      // My Tickets tab
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MyTicketsScreen()),
+      ).then((_) {
+        // When returning from My Tickets, reset to Home tab
+        setState(() {
+          _currentIndex = 0;
+        });
+      });
+    } else if (index == 2) {
+      // Profile tab
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      ).then((_) {
+        // When returning from Profile, reset to Home tab
+        setState(() {
+          _currentIndex = 0;
+        });
+      });
     }
-    return Event.sampleEvents
-        .where((event) => event.category == selectedCategory)
-        .toList();
+    // Index 0 is Home, so we don't navigate away
   }
 
   @override
@@ -36,21 +69,89 @@ class _EventsListScreenState extends State<EventsListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('${widget.category} Events'),
-        backgroundColor: const Color(0xFF2563EB),
+        title: const Text('SPOTA'),
+        backgroundColor: const Color.fromARGB(255, 99, 146, 249),
         foregroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NotificationsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: Column(
-        children: [
-          // Categories Filter
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Welcome Text
+            const Text(
+              'Discover Events',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Find your vibe in Bahir Dar',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Search Bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search events...',
+                  border: InputBorder.none,
+                  icon: Icon(Icons.search, color: Colors.grey[500]),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Categories
+            SizedBox(
               height: 40,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: ['All', 'Music', 'Sports', 'University', 'Cultural']
-                    .map((category) {
+                children: categories.map((category) {
                   return CategoryChip(
                     label: category,
                     isSelected: selectedCategory == category,
@@ -63,29 +164,108 @@ class _EventsListScreenState extends State<EventsListScreen> {
                 }).toList(),
               ),
             ),
-          ),
 
-          // Events List
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: filteredEvents.map((event) {
-                return EventCard(
-                  event: event,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EventDetailsScreen(event: event),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
+            const SizedBox(height: 24),
+
+            // Featured Events
+            const Text(
+              'Featured Events',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            const SizedBox(height: 16),
+
+            // Events List
+            StreamBuilder<List<Event>>(
+              stream: _eventService.getEventsStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                final events = snapshot.data ?? [];
+
+                // Filter by category and search query
+                final filteredEvents = events.where((e) {
+                  final matchesCategory = selectedCategory == 'All' ||
+                      e.category == selectedCategory;
+                  final matchesSearch = _searchQuery.isEmpty ||
+                      e.title.toLowerCase().contains(_searchQuery);
+                  return matchesCategory && matchesSearch;
+                }).toList();
+
+                if (filteredEvents.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        Icon(Icons.event_note,
+                            size: 64, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No events found in $selectedCategory',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: filteredEvents.map((event) {
+                    return EventCard(
+                      event: event,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EventDetailsScreen(event: event),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xFF2563EB),
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: 'My Tickets',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }
